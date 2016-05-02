@@ -1,0 +1,123 @@
+from random import shuffle
+import sys
+from time import sleep
+
+# version compatibility shim
+if sys.hexversion <= 0x3000000:  # Python 2.x
+    inp = raw_input
+else:                            # Python 3.x
+    inp = input
+
+def get_word(prompt):
+    return inp(prompt).strip().lower()
+
+def shuffled(words):
+    words_copy = list(words)
+    shuffle(words_copy)
+    return words_copy
+
+class MadLib:
+    BLANK = "___"
+    DELAY = 1
+
+    def __init__(self, intros, prompt, words):
+        self.intros = intros
+        self.prompt = prompt
+        self.words = words
+        self.num_words = len(words)
+        assert prompt.count(self.BLANK) == self.num_words, "Number of blanks must match number of words!"
+
+    def play(self):
+        # show introduction
+        for s in self.intros:
+            sleep(self.DELAY)
+            print(s, flush=True)
+        # display madlib with blanks
+        sleep(self.DELAY)
+        print(self.prompt)
+        # get words from user
+        print("Words available: " + ", ".join(shuffled(self.words)))
+        gotten = [
+            get_word("Word {}: ".format(i))
+            for i in range(1, self.num_words + 1)
+        ]
+        # evaluate results
+        num_right = sum(g == w for g,w in zip(gotten, self.words))
+        if num_right == self.num_words:
+            print("You did it!")
+            return True
+        else:
+            print("You got {} out of {} words right.".format(num_right, self.num_words))
+            return False
+
+madlibs = {
+    "easy":
+        MadLib(
+            [
+                "Here we go...",
+                "Here's your text. Should be an easy one.",
+                "Just fill in the blanks!"
+            ],
+            (
+                "Python is a ___ language that provides constructs intended to "
+                "enable clear programs on both small and large scale. "
+                "Python implementation was started in December ___ by "
+                "Guido von Rossum. The most basic ___ in Python is ___, "
+                "often used by beginners to tell Python to display 'Hello "
+                "World' on the screen."
+            ),
+            ['programming', '1989', 'command', 'print']
+        ),
+    "medium":
+        MadLib(
+            [
+                "Good choice. Lets see how much you know about Python",
+                "Here's your text. It's a tricky one that requires some more knowledge about Python.",
+                "Just fill in the blanks!"
+            ],
+            (
+                "A string object is ___, i.e. it cannot be modified after it "
+                "has been created. An important concept in Python and other "
+                "programming languages is the ___, used to store a value. "
+                "To assign a value to you use the ___ operator. A more "
+                "versatile data type in Python is ___, containing items "
+                "separated by commas and within square brackets and to "
+                "some extent they are similar to arrays in C."
+            ),
+            ['immutable', 'variable', 'equals', 'list']
+        ),
+    "hard":
+        MadLib(
+            [
+                "Bold move! Here we go. Check out this text. It's a tough one!",
+                "Here's your text.  This one requires quite some Python knowledge.",
+                "Just fill in the blanks!",                
+                "Here's your text:"
+            ],
+            (
+                "Similar to other programming languages, Python has flow "
+                "control commands. The most common is ___ which lets you branch "
+                "based on a condition. Looping commands like ___ execute "
+                "statements a given number of times, or ___ repeats statements "
+                "so long as a condition is True."
+            ),
+            ['if', 'for', 'while']
+        )
+}    
+
+def main():
+    print(
+        "Welcome to my first quiz with user input!\n"
+        "Lets get cracking straight away."
+    )
+    while True:
+        choice = get_word("Which difficulty level would you like? [easy, medium, hard] (or just hit Enter to exit) ")
+        if not choice:
+            break
+        elif choice in madlibs:
+            madlibs[choice].play()
+        else:
+            print("Sorry, that was not a recognized option.")
+
+if __name__=="__main__":
+    main()
