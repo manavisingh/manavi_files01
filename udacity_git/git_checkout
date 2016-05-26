@@ -14,4 +14,4 @@ Both of these are sometimes true. Since each commit tracks the state of all file
 After checking out a commit, the state of all the files in the repository will be from the same point in time.
 This is always true. A commit saves a snapshot of all files in the repository at the time the commit was made, so checking out an earlier commit will result in all the files being reverted to their state at the time the commit was made. That is, the files will be in a consistent state.
 
-
+Test line
